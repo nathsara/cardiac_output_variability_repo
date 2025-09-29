@@ -9,7 +9,7 @@ def create_data_df(folder_path, subject):
     for filename in os.listdir(folder_path):
         file_path = os.path.join(folder_path, filename)
 
-        file_df = pd.read_csv(file_path, usecols=[0, 49, 45]).dropna()
+        file_df = pd.read_csv(file_path, usecols=[0, 49, 46]).dropna()
 
         raw_hd_data = pd.concat([raw_hd_data, file_df])
 
