@@ -1,8 +1,6 @@
-import os
-import pickle
-import pandas as pd
-from datetime import datetime, time, timedelta
 import data_init
+import process
+import plots
 
 '''
 RUN THE BELOW SECTION ONLY ONCE:
@@ -24,3 +22,17 @@ not at the same index for each subject.
 #205
 #data_init.create_data_df("VBU_205_2021_12_13/VBU00205CalibratedLVV", "205")
 #data_init.create_raw_phase_data("VBU_205_2021_12_13/205_TDvAIC.csv", "raw_hd_data_205.pkl", "205")
+
+
+
+#RUN A SINGLE PHASE:
+#process.pipeline("203_Nitro_high_P3")
+
+# RUN A SINGLE PHASE:
+process.combined_phase_data(221, plot=True)
+
+# RUN EVERYTHING
+'''process.combined_phase_data(221)
+process.combined_phase_data(205)
+process.combined_phase_data(203)
+process.combined_phase_data(202)'''

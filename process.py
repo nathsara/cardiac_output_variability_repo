@@ -1,9 +1,9 @@
-import os
 import pickle
 import pandas as pd
 from datetime import datetime, time, timedelta
 from ecgdetectors import Detectors
 from scipy.signal import find_peaks
+import plots
 
 def arrythmia_removal(label, ecg_df, lvp_df):
     # certain subjects/metrics/phases require arrhythmia extraction and then a set of extra processing steps to clean up the data.
@@ -49,13 +49,19 @@ def arrythmia_removal(label, ecg_df, lvp_df):
 
     return ecg_df, lvp_df
 
-# GENERAL PIPELINE
-def pipeline(label, ecg_df, lvp_df):
+# GENERAL PIPELINE (SINGLE PHASE INPUT)
+def pipeline(label, plot=True):
+
+    animal = label[:3]
+    f1 = open(f"{animal}_data/{label}_ecg_raw.pkl", 'rb')
+    f2 = open(f"{animal}_data/{label}_lvp_raw.pkl", 'rb')
+    ecg_df = pickle.load(f1)
+    lvp_df = pickle.load(f2)
     
     ecg_df, lvp_df = arrythmia_removal(label, ecg_df, lvp_df)
 
     if label in ["203_Nitro_high_P3", "203_Nitro_low_P3", "202_Phen_0_P3", "202_Washout_1_P3"]:
-        max_dpdt, min_dpdt, lvedp, r_peaks_timestamps, lvp_peaks_timestamps, dpdt = extra_processing_pipeline(label, ecg_df, lvp_df)
+        max_dpdt, min_dpdt, lvedp, r_peaks_timestamps, lvp_peaks_timestamps, dpdt = extra_processing_pipeline(ecg_df, lvp_df)
     else:
 
         dpdt = calc_deriv_lvp(list(lvp_df['lvp']), list(lvp_df['time']))
@@ -69,7 +75,7 @@ def pipeline(label, ecg_df, lvp_df):
         lvedp_data = []
         reference_indices = [list(lvp_df['time']).index(x) for x in r_peaks_timestamps]
         for ref_idx in reference_indices:
-            lvedp_data.append(lvp_df[ref_idx])
+            lvedp_data.append(lvp_df['lvp'][ref_idx])
 
         lvedp = pd.DataFrame({
                 'time' : r_peaks_timestamps,
@@ -92,10 +98,10 @@ def pipeline(label, ecg_df, lvp_df):
         min_dpdt = pd.DataFrame({'time' : dpdt_min_time_list, 'dpdt_min': dpdt_min_list})
 
     pd.DataFrame({'time': lvp_df['time'][:-1],
-                 'dpdt': dpdt}).to_pickle("dpdt_"+label+".pkl")
-    max_dpdt.to_pickle("dpdt_max_"+label+".pkl")
-    min_dpdt.to_pickle("dpdt_min_"+label+".pkl")
-    lvedp.to_pickle("lvedp_"+label+".pkl")
+                 'dpdt': dpdt}).to_pickle(f"{animal}_data/dpdt_{label}.pkl")
+    max_dpdt.to_pickle(f"{animal}_data/dpdt_max_{label}.pkl")
+    min_dpdt.to_pickle(f"{animal}_data/dpdt_min_{label}.pkl")
+    lvedp.to_pickle(f"{animal}_data/lvedp_{label}.pkl")
 
     #outlier detection
     dpdt_max_outliers = detect_outliers(max_dpdt["time"], max_dpdt["dpdt_max"], label+"dpdt_max1")
@@ -108,9 +114,9 @@ def pipeline(label, ecg_df, lvp_df):
     lvedp_cleaned = remove_outliers(lvedp, lvedp_outliers)
 
     # save files after first round of outlier extraction:
-    dpdt_max_cleaned.to_pickle("dpdt_max_"+label+"_cleaned.pkl")
-    dpdt_min_cleaned.to_pickle("dpdt_min_"+label+"_cleaned.pkl")
-    lvedp_cleaned.to_pickle("lvedp_"+label+"_cleaned.pkl")
+    dpdt_max_cleaned.to_pickle(f"{animal}_data/dpdt_max_{label}_cleaned.pkl")
+    dpdt_min_cleaned.to_pickle(f"{animal}_data/dpdt_min_{label}_cleaned.pkl")
+    lvedp_cleaned.to_pickle(f"{animal}_data/lvedp_{label}_cleaned.pkl")
 
     #outlier detection -- 2
     dpdt_max_outliers2 = detect_outliers(dpdt_max_cleaned["time"], dpdt_max_cleaned["dpdt_max"], label+"dpdt_max2")
@@ -123,9 +129,12 @@ def pipeline(label, ecg_df, lvp_df):
     lvedp_cleaner = remove_outliers(lvedp_cleaned, lvedp_outliers2)
 
     # save files after second round of outlier extraction:
-    dpdt_max_cleaner.to_pickle("dpdt_max_"+label+"_cleaner.pkl")
-    dpdt_min_cleaner.to_pickle("dpdt_min_"+label+"_cleaner.pkl")
-    lvedp_cleaner.to_pickle("lvedp_"+label+"_cleaner.pkl")
+    dpdt_max_cleaner.to_pickle(f"{animal}_data/dpdt_max_{label}_cleaner.pkl")
+    dpdt_min_cleaner.to_pickle(f"{animal}_data/dpdt_min_{label}_cleaner.pkl")
+    lvedp_cleaner.to_pickle(f"{animal}_data/lvedp_{label}_cleaner.pkl")
+
+    if plot:
+        plots.phase_data_plot(ecg_df, lvp_df, r_peaks_timestamps, dpdt_max_cleaner, dpdt_min_cleaner, lvedp_cleaner, dpdt, label)
 
     #compute mean and std of each file and add to running list (defined earlier):
     dpdt_max_mean = dpdt_max_cleaner["dpdt_max"].mean()
@@ -139,7 +148,7 @@ def pipeline(label, ecg_df, lvp_df):
 
     return dpdt_max_mean, dpdt_max_std, dpdt_min_mean, dpdt_min_std, lvedp_mean, lvedp_std
 
-# PIPELINE FOR ADDITIONAL PROCESSING
+# PIPELINE FOR ADDITIONAL PROCESSING (SINGLE PHASE INPUT)
 def extra_processing_pipeline(ecg_df, lvp_df, lvedp_finetuning=True, dpdt_finetuning=True, dpdt_res=15, lvedp_res=10):
     # after removing the arrhythmias, we now have gaps in our data -- and we only want continuous segments of data being fed into
     # the pipeline from here on out.
@@ -205,14 +214,27 @@ def extra_processing_pipeline(ecg_df, lvp_df, lvedp_finetuning=True, dpdt_finetu
 
     return max_dpdt, min_dpdt, lvedp, r_peaks_timestamps, lvp_peaks_timestamps, dpdt
 
-# SUMMARY DATA PER ANIMAL
-def combined_phase_data(animal):
+# SUMMARY DATA PER ANIMAL (SINGLE ANIMAL INPUT)
+def combined_phase_data(animal, plot=True):
 
     if (animal==221):
         phases = ["221_Baseline_0_P6", "221_Baseline_0_P3", "221_Nitro_low_P6", "221_Nitro_low_P3", "221_Nitro_high_P6", "221_Nitro_high_P3",
                   "221_Washout_0_P6", "221_Washout_0_P3", "221_Phen_low_P6", "221_Phen_low_P3", "221_Phen_high_P6", "221_Phen_high_P3",
                   "221_Washout_1_P6", "221_Washout_1_P3", "221_Dobu_low_P6", "221_Dobu_low_P3"]
-        
+    elif (animal==205):
+        phases = ["205_Baseline_0_P6", "205_Baseline_0_P3", "205_Nitro_low_P6", "205_Nitro_low_P3", "205_Nitro_high_P6", "205_Nitro_high_P3",
+                  "205_Washout_1_P6", "205_Washout_1_P3", "205_Phen_low_P6", "205_Phen_low_P3", "205_Phen_high_P6", "205_Phen_high_P3",
+                  "205_Washout_2_P6", "205_Washout_2_P3", "205_Dobu_low_P6", "205_Dobu_low_P3", "205_Dobu_high_P6"]
+    elif (animal == 203):
+        phases = ["203_Baseline_0_P6", "203_Baseline_0_P3", "203_Nitro_low_P6", "203_Nitro_low_P3", "203_Nitro_high_P6", "203_Nitro_high_P3",
+                  "203_Washout_0_P6", "203_Washout_0_P3", "203_Phen_low_P6", "203_Phen_low_P3", "203_Phen_high_P6", "203_Phen_high_P3",
+                  "203_Washout_2_P6", "203_Washout_2_P3", "203_Dobu_low_P6", "203_Dobu_low_P3", "203_Dobu_high_P6", "203_Dobu_high_P3", 
+                  "203_Washout_3_P6", "203_Washout_3_P3", "203_Esmo_low_P6", "203_Washout_Esmo_low_P3"]
+    elif (animal == 202):
+        phases = ["202_Baseline_0_P6", "202_Baseline_0_P3", "202_Nitro_low_P6", "202_Nitro_low_P3", "202_Nitro_high_P6", "202_Nitro_high_P3",
+                  "202_Washout_0_P6", "202_Washout_0_P3", "202_Phen_0_P6", "202_Phen_0_P3",
+                  "202_Washout_1_P6", "202_Washout_1_P3", "202_Dobu_0_P6", "202_Dobu_0_P3",
+                  "202_Washout_2_P6", "202_Washout_2_P3", "202_Esmo_0_P6", "202_Esmo_0_P3"]
     dpdt_max_means = []
     dpdt_max_stds = []
     dpdt_min_means = []
@@ -221,9 +243,7 @@ def combined_phase_data(animal):
     lvedp_stds = []
         
     for phase in phases:
-        ecg_df = pickle.load(f"{phase}_ecg_raw.pkl", 'rb')
-        lvp_df = pickle.load(f'{phase}_lvp_raw.pkl', 'rb')
-        dpdt_max_mean, dpdt_max_std, dpdt_min_mean, dpdt_min_std, lvedp_mean, lvedp_std = pipeline(phase, ecg_df, lvp_df)
+        dpdt_max_mean, dpdt_max_std, dpdt_min_mean, dpdt_min_std, lvedp_mean, lvedp_std = pipeline(phase, plot=plot)
 
         dpdt_max_means.append(dpdt_max_mean)
         dpdt_max_stds.append(dpdt_max_std)
@@ -240,13 +260,30 @@ def combined_phase_data(animal):
     dpdt_min_stds_df = pd.DataFrame(dpdt_min_stds, columns=["dpdt_min_std"])
     lvedp_stds_df = pd.DataFrame(lvedp_stds, columns=["lvedp_std"])
 
-    dpdt_max_means_df.to_pickle("dpdt_max_means_"+animal+".pkl")
-    dpdt_min_means_df.to_pickle("dpdt_min_means_"+animal+".pkl")
-    lvedp_means_df.to_pickle("lvedp_means_"+animal+".pkl")
+    dpdt_max_means_df.to_pickle(f"{animal}_data/dpdt_max_means_{animal}.pkl")
+    dpdt_min_means_df.to_pickle(f"{animal}_data/dpdt_min_means_{animal}.pkl")
+    lvedp_means_df.to_pickle(f"{animal}_data/lvedp_means_{animal}.pkl")
 
-    dpdt_max_stds_df.to_pickle("dpdt_max_stds"+animal+".pkl")
-    dpdt_min_stds_df.to_pickle("dpdt_min_stds"+animal+".pkl")
-    lvedp_stds_df.to_pickle("lvedp_stds"+animal+".pkl")
+    dpdt_max_stds_df.to_pickle(f"{animal}_data/dpdt_max_stds_{animal}.pkl")
+    dpdt_min_stds_df.to_pickle(f"{animal}_data/dpdt_min_stds_{animal}.pkl")
+    lvedp_stds_df.to_pickle(f"{animal}_data/lvedp_stds_{animal}.pkl")
+
+    if (animal==221):
+        plots.generate_221_plot(dpdt_max_means, dpdt_max_stds, animal, "dp/dt max")
+        plots.generate_221_plot(dpdt_min_means, dpdt_min_stds, animal, "dp/dt min")
+        plots.generate_221_plot(lvedp_means, lvedp_stds, animal, "lvedp")
+    elif (animal == 205):
+        plots.generate_205_plot(dpdt_max_means, dpdt_max_stds, animal, "dp/dt max")
+        plots.generate_205_plot(dpdt_min_means, dpdt_min_stds, animal, "dp/dt min")
+        plots.generate_205_plot(lvedp_means, lvedp_stds, animal, "lvedp")
+    elif (animal==203):
+        plots.generate_203_plot(dpdt_max_means, dpdt_max_stds, animal, "dp/dt max")
+        plots.generate_203_plot(dpdt_min_means, dpdt_min_stds, animal, "dp/dt min")
+        plots.generate_203_plot(lvedp_means, lvedp_stds, animal, "lvedp")
+    elif (animal==202):
+        plots.generate_202_plot(dpdt_max_means, dpdt_max_stds, animal, "dp/dt max")
+        plots.generate_202_plot(dpdt_min_means, dpdt_min_stds, animal, "dp/dt min")
+        plots.generate_202_plot(lvedp_means, lvedp_stds, animal, "lvedp")
 
 ### HELPER FUNCTIONS
 def stitch_segments(list_of_segments):
@@ -273,7 +310,6 @@ def split_data_into_segments(data, max_segment_length=10, SAMPLING_FREQUENCY=250
     specified (default is 10 seconds). When we have a gap of more than 4 milliseconds between a data point and the data point after it, that
     means we've hit a discontinuity; end the segment and start a new segment.
     '''
-
     time_data = data["time"]
     anchored_time = [datetime.combine(datetime.today(), t) for t in time_data]
     list_of_segments = []
