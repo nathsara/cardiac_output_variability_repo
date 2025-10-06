@@ -61,7 +61,7 @@ def pipeline(label, plot=True):
     ecg_df, lvp_df = arrythmia_removal(label, ecg_df, lvp_df)
 
     if label in ["203_Nitro_high_P3", "203_Nitro_low_P3", "202_Phen_0_P3", "202_Washout_1_P3"]:
-        max_dpdt, min_dpdt, lvedp, r_peaks_timestamps, lvp_peaks_timestamps, dpdt = extra_processing_pipeline(ecg_df, lvp_df)
+        max_dpdt, min_dpdt, lvedp, r_peaks_timestamps, lvp_peaks_timestamps, dpdt = extra_processing_pipeline(ecg_df, lvp_df, lvedp_finetuning=True)
     else:
 
         dpdt = calc_deriv_lvp(list(lvp_df['lvp']), list(lvp_df['time']))
@@ -149,7 +149,7 @@ def pipeline(label, plot=True):
     return dpdt_max_mean, dpdt_max_std, dpdt_min_mean, dpdt_min_std, lvedp_mean, lvedp_std
 
 # PIPELINE FOR ADDITIONAL PROCESSING (SINGLE PHASE INPUT)
-def extra_processing_pipeline(ecg_df, lvp_df, lvedp_finetuning=True, dpdt_finetuning=True, dpdt_res=15, lvedp_res=10):
+def extra_processing_pipeline(ecg_df, lvp_df, lvedp_finetuning=True, dpdt_finetuning=True, dpdt_res=15, lvedp_res=15):
     # after removing the arrhythmias, we now have gaps in our data -- and we only want continuous segments of data being fed into
     # the pipeline from here on out.
     ecg_segments = split_data_into_segments(ecg_df)
@@ -228,8 +228,8 @@ def combined_phase_data(animal, plot=True):
     elif (animal == 203):
         phases = ["203_Baseline_0_P6", "203_Baseline_0_P3", "203_Nitro_low_P6", "203_Nitro_low_P3", "203_Nitro_high_P6", "203_Nitro_high_P3",
                   "203_Washout_0_P6", "203_Washout_0_P3", "203_Phen_low_P6", "203_Phen_low_P3", "203_Phen_high_P6", "203_Phen_high_P3",
-                  "203_Washout_2_P6", "203_Washout_2_P3", "203_Dobu_low_P6", "203_Dobu_low_P3", "203_Dobu_high_P6", "203_Dobu_high_P3", 
-                  "203_Washout_3_P6", "203_Washout_3_P3", "203_Esmo_low_P6", "203_Washout_Esmo_low_P3"]
+                  "203_Washout_1_P6", "203_Washout_1_P3", "203_Dobu_low_P6", "203_Dobu_low_P3", "203_Dobu_high_P6", "203_Dobu_high_P3", 
+                  "203_Washout_2_P6", "203_Washout_2_P3", "203_Esmo_low_P6", "203_Esmo_low_P3"]
     elif (animal == 202):
         phases = ["202_Baseline_0_P6", "202_Baseline_0_P3", "202_Nitro_low_P6", "202_Nitro_low_P3", "202_Nitro_high_P6", "202_Nitro_high_P3",
                   "202_Washout_0_P6", "202_Washout_0_P3", "202_Phen_0_P6", "202_Phen_0_P3",
@@ -372,6 +372,7 @@ def lvedp_finetuner(lvedp, lvedp_timestamps, dpdt, lvp, lvp_timestamps, resoluti
 
         if real_lvedp > 25:
             for j in range(index_on_lvp-resolution, index_on_lvp+resolution+1):
+                print(j, lvp[j])
                 if dpdt[j] < corr_dpdt and dpdt[j] > 0 and lvp[j] <= 25:
                     try:
                         corr_dpdt = dpdt[j]

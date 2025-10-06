@@ -54,7 +54,7 @@ def generate_221_plot(means, stds, subject, metric):
     plt.errorbar(xaxis_p6, p6_mean, yerr=p6_std, marker='o', capsize=5, linestyle="None", linewidth=1, label='P6')
     plt.errorbar(xaxis_p3, p3_mean, yerr=p3_std, marker='o', capsize=5, linestyle="None", linewidth=1, color='green', label='P3')
 
-    plt.title(metric + ' (Subject ' + subject + ")")
+    plt.title(f"{metric} (Subject {subject})")
     plt.ylabel('mmHG/s')
     plt.legend()
     plt.grid(axis="x")
@@ -116,7 +116,7 @@ def generate_203_plot(means, stds, subject, metric):
     plt.errorbar(xaxis_p6, p6_mean, yerr=p6_std, marker='o', capsize=5, linestyle="None", linewidth=1, label='P6')
     plt.errorbar(xaxis_p3, p3_mean, yerr=p3_std, marker='o', capsize=5, linestyle="None", linewidth=1, color='green', label='P3')
 
-    plt.title(metric + ' (Subject ' + subject + ")")
+    plt.title(f"{metric} (Subject {subject})")
     plt.ylabel('mmHG/s')
     plt.legend()
     plt.grid(axis="x")
@@ -175,7 +175,7 @@ def generate_205_plot(means, stds, subject, metric):
     plt.errorbar(xaxis_p6, p6_mean, yerr=p6_std, marker='o', capsize=5, linestyle="None", linewidth=1, label='P6')
     plt.errorbar(xaxis_p3, p3_mean, yerr=p3_std, marker='o', capsize=5, linestyle="None", linewidth=1, color='green', label='P3')
 
-    plt.title(metric + ' (Subject ' + subject + ")")
+    plt.title(f"{metric} (Subject {subject})")
     plt.ylabel('mmHG/s')
     plt.legend()
     plt.grid(axis="x")
@@ -236,7 +236,7 @@ def generate_202_plot(means, stds, subject, metric):
     plt.errorbar(xaxis_p6, p6_mean, yerr=p6_std, marker='o', capsize=5, linestyle="None", linewidth=1, label='P6')
     plt.errorbar(xaxis_p3, p3_mean, yerr=p3_std, marker='o', capsize=5, linestyle="None", linewidth=1, color='green', label='P3')
 
-    plt.title(metric + ' (Subject ' + subject + ")")
+    plt.title(f"{metric} (Subject {subject})")
     plt.ylabel('mmHG/s')
     plt.legend()
     plt.grid(axis="x")

@@ -26,10 +26,10 @@ not at the same index for each subject.
 
 
 #RUN A SINGLE PHASE:
-#process.pipeline("203_Nitro_high_P3")
+#process.pipeline("202_Phen_0_P3")
 
 # RUN A SINGLE PHASE:
-process.combined_phase_data(221, plot=True)
+process.combined_phase_data(202, plot=False)
 
 # RUN EVERYTHING
 '''process.combined_phase_data(221)
