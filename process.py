@@ -369,20 +369,24 @@ def lvedp_finetuner(lvedp, lvedp_timestamps, dpdt, lvp, lvp_timestamps, resoluti
         real_lvedp = lvedp[i]
         real_lvedp_timestamp = lvedp_timestamps[i]
         corr_dpdt = dpdt[index_on_lvp]
-
+        print("BREAK")
+        print("INITIAL: ", real_lvedp)
         if real_lvedp > 25:
             for j in range(index_on_lvp-resolution, index_on_lvp+resolution+1):
                 print(j, lvp[j])
-                if dpdt[j] < corr_dpdt and dpdt[j] > 0 and lvp[j] <= 25:
+                #if dpdt[j] < corr_dpdt and dpdt[j] > 0 and lvp[j] <= 30:
+                if lvp[j] <= 30:
                     try:
+                        print("ENTERED")
                         corr_dpdt = dpdt[j]
                         real_lvedp = lvp[j]
                         real_lvedp_timestamp = lvp_timestamps[j]
                     except KeyError:
                         j += 1
-
+            print("DECIDED: ", real_lvedp)
             lvedp[i] = real_lvedp
             lvedp_timestamps[i] = real_lvedp_timestamp
+
 
     return lvedp, lvedp_timestamps
 
