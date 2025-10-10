@@ -28,11 +28,11 @@ not at the same index for each subject.
 #RUN A SINGLE PHASE:
 #process.pipeline("202_Phen_0_P3")
 
-# RUN A SINGLE ANIMAL:
+# RUN A SINGLE ANIMAL: (plot=False) means a plot won't be generated for each phase for the animal; the summary plots containing ALL phase data are always generated.
 #process.combined_phase_data(202, plot=False)
 
 # RUN EVERYTHING
-'''process.combined_phase_data(221)
-process.combined_phase_data(205)
-process.combined_phase_data(203)
-process.combined_phase_data(202)'''
+process.combined_phase_data(221, plot=False)
+process.combined_phase_data(205, plot=False)
+process.combined_phase_data(203, plot=False)
+process.combined_phase_data(202, plot=False)

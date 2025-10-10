@@ -26,13 +26,6 @@ def generate_221_plot(means, stds, subject, metric):
     for i, t in enumerate(state_change_times):
         plt.axvline(x=t, color='gray', linestyle='--', linewidth=1)
 
-    plt.text(0.5, 3.75, state_labels[0], horizontalalignment='center', verticalalignment='top', fontsize=9)
-    plt.text(3.5, 3.75, state_labels[1], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(6.5, 3.75, state_labels[2], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(9.5, 3.75, state_labels[3], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(12.5, 3.75, state_labels[4], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(15, 3.75, state_labels[5], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-
     # DATA SPECIFIC PLOT MODIFICATIONS + GRAPHING OF DATA
 
     y_low = min([means[i] - stds[i] for i in range(len(means))])
@@ -41,6 +34,13 @@ def generate_221_plot(means, stds, subject, metric):
     plt.ylim(round(y_low-1), round(y_high+1))
     plt.subplots_adjust(bottom=0.2)
     plt.xticks(list(range(0, 16)))
+
+    plt.text(0.5, y_low-1, state_labels[0], horizontalalignment='center', verticalalignment='top', fontsize=9)
+    plt.text(3.5, y_low-1, state_labels[1], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(6.5, y_low-1, state_labels[2], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(9.5, y_low-1, state_labels[3], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(12.5, y_low-1, state_labels[4], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(15, y_low-1, state_labels[5], horizontalalignment='center', verticalalignment='top',  fontsize=9)
 
     xaxis = list(range(len(means)))
 
@@ -86,15 +86,6 @@ def generate_203_plot(means, stds, subject, metric):
     for i, t in enumerate(state_change_times):
         plt.axvline(x=t, color='gray', linestyle='--', linewidth=1)
 
-    plt.text(0.5, -4.5, state_labels[0], horizontalalignment='center', verticalalignment='top', fontsize=9)
-    plt.text(3.5, -4.5, state_labels[1], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(6.5, -4.5, state_labels[2], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(9.5, -4.5, state_labels[3], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(12.5, -4.5, state_labels[4], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(15.5, -4.5, state_labels[5], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(18.5, -4.5, state_labels[6], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(20.5, -4.5, state_labels[7], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-
     # DATA SPECIFIC PLOT MODIFICATIONS + GRAPHING OF DATA
 
     y_low = min([means[i] - stds[i] for i in range(len(means))])
@@ -103,6 +94,15 @@ def generate_203_plot(means, stds, subject, metric):
     plt.ylim(round(y_low-1), round(y_high+1))
     plt.subplots_adjust(bottom=0.2)
     plt.xticks(list(range(0, 22)))
+
+    plt.text(0.5, y_low-1, state_labels[0], horizontalalignment='center', verticalalignment='top', fontsize=9)
+    plt.text(3.5, y_low-1, state_labels[1], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(6.5, y_low-1, state_labels[2], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(9.5, y_low-1, state_labels[3], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(12.5, y_low-1, state_labels[4], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(15.5, y_low-1, state_labels[5], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(18.5, y_low-1, state_labels[6], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(20.5, y_low-1, state_labels[7], horizontalalignment='center', verticalalignment='top',  fontsize=9)
 
     xaxis = list(range(len(means)))
 
@@ -147,13 +147,6 @@ def generate_205_plot(means, stds, subject, metric):
     for i, t in enumerate(state_change_times):
         plt.axvline(x=t, color='gray', linestyle='--', linewidth=1)
 
-    plt.text(0.5, -1.5, state_labels[0], horizontalalignment='center', verticalalignment='top', fontsize=9)
-    plt.text(3.5, -1.5, state_labels[1], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(6.5, -1.5, state_labels[2], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(9.5, -1.5, state_labels[3], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(12.5, -1.5, state_labels[4], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(15.5, -1.5, state_labels[5], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-
     # DATA SPECIFIC PLOT MODIFICATIONS + GRAPHING OF DATA
 
     y_low = min([means[i] - stds[i] for i in range(len(means))])
@@ -162,6 +155,13 @@ def generate_205_plot(means, stds, subject, metric):
     plt.ylim(round(y_low-1), round(y_high+1))
     plt.subplots_adjust(bottom=0.2)
     plt.xticks(list(range(0, 17)))
+
+    plt.text(0.5, y_low-1, state_labels[0], horizontalalignment='center', verticalalignment='top', fontsize=9)
+    plt.text(3.5, y_low-1, state_labels[1], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(6.5, y_low-1, state_labels[2], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(9.5, y_low-1, state_labels[3], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(12.5, y_low-1, state_labels[4], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(15.5, y_low-1, state_labels[5], horizontalalignment='center', verticalalignment='top',  fontsize=9)
 
     xaxis = list(range(len(means)))
 
@@ -206,15 +206,6 @@ def generate_202_plot(means, stds, subject, metric):
     for i, t in enumerate(state_change_times):
         plt.axvline(x=t, color='gray', linestyle='--', linewidth=1)
 
-    plt.text(0.5, -4.5, state_labels[0], horizontalalignment='center', verticalalignment='top', fontsize=9)
-    plt.text(3.5, -4.5, state_labels[1], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(6.5, -4.5, state_labels[2], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(8.5, -4.5, state_labels[3], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(10.5, -4.5, state_labels[4], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(12.5, -4.5, state_labels[5], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(14.5, -4.5, state_labels[6], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-    plt.text(16.5, -4.5, state_labels[7], horizontalalignment='center', verticalalignment='top',  fontsize=9)
-
     # DATA SPECIFIC PLOT MODIFICATIONS + GRAPHING OF DATA
 
     y_low = min([means[i] - stds[i] for i in range(len(means))])
@@ -223,6 +214,15 @@ def generate_202_plot(means, stds, subject, metric):
     plt.ylim(round(y_low-1), round(y_high+1))
     plt.subplots_adjust(bottom=0.2)
     plt.xticks(list(range(0, 18)))
+
+    plt.text(0.5, y_low-1, state_labels[0], horizontalalignment='center', verticalalignment='top', fontsize=9)
+    plt.text(3.5, y_low-1, state_labels[1], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(6.5, y_low-1, state_labels[2], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(8.5, y_low-1, state_labels[3], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(10.5, y_low-1, state_labels[4], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(12.5, y_low-1, state_labels[5], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(14.5, y_low-1, state_labels[6], horizontalalignment='center', verticalalignment='top',  fontsize=9)
+    plt.text(16.5, y_low-1, state_labels[7], horizontalalignment='center', verticalalignment='top',  fontsize=9)
 
     xaxis = list(range(len(means)))
 
