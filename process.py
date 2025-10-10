@@ -205,7 +205,7 @@ def extra_processing_pipeline(ecg_df, lvp_df, lvedp_finetuning=True, dpdt_finetu
         'dpdt_min': dpdt_min_list})
 
     if lvedp_finetuning:
-        lvedp_list, lvedp_time_list = lvedp_finetuner(lvedp["lvedp"].tolist(), lvedp["time"].tolist(), dpdt, lvp_df["lvp"].tolist(), lvp_df["time"].tolist(), resolution=lvedp_res)
+        lvedp_list, lvedp_time_list = lvedp_finetuner(lvedp["lvedp"].tolist(), lvedp["time"].tolist(), lvp_df["lvp"].tolist(), lvp_df["time"].tolist(), resolution=lvedp_res)
 
         lvedp = pd.DataFrame({
         'time' : lvedp_time_list,
@@ -363,7 +363,7 @@ def finetune_signal(signal_data, signal_time_axis):
 
     return selected, selected_timestamps
 
-def lvedp_finetuner(lvedp, lvedp_timestamps, dpdt, lvp, lvp_timestamps, resolution=10):
+def lvedp_finetuner(lvedp, lvedp_timestamps, lvp, lvp_timestamps, resolution=10):
     '''
     resolution = number of data points examined before and after identified r-peak timestamp. 10 data points = 40 ms of data.
     '''
@@ -372,22 +372,19 @@ def lvedp_finetuner(lvedp, lvedp_timestamps, dpdt, lvp, lvp_timestamps, resoluti
         index_on_lvp = lvp_timestamps.index(lvedp_timestamps[i])
         real_lvedp = lvedp[i]
         real_lvedp_timestamp = lvedp_timestamps[i]
-        corr_dpdt = dpdt[index_on_lvp]
-        print("BREAK")
-        print("INITIAL: ", real_lvedp)
+        #print("BREAK")
+        #print("INITIAL: ", real_lvedp)
         if real_lvedp > 25:
             for j in range(index_on_lvp-resolution, index_on_lvp+resolution+1):
-                print(j, lvp[j])
-                #if dpdt[j] < corr_dpdt and dpdt[j] > 0 and lvp[j] <= 30:
+                #print(j, lvp[j])
                 if lvp[j] <= 30:
                     try:
-                        print("ENTERED")
-                        corr_dpdt = dpdt[j]
+                        #print("ENTERED")
                         real_lvedp = lvp[j]
                         real_lvedp_timestamp = lvp_timestamps[j]
                     except KeyError:
                         j += 1
-            print("DECIDED: ", real_lvedp)
+            #print("DECIDED: ", real_lvedp)
             lvedp[i] = real_lvedp
             lvedp_timestamps[i] = real_lvedp_timestamp
 
