@@ -217,6 +217,7 @@ def extra_processing_pipeline(ecg_df, lvp_df, lvedp_finetuning=True, dpdt_finetu
 # SUMMARY DATA PER ANIMAL (SINGLE ANIMAL INPUT)
 def combined_phase_data(animal, plot=True):
 
+    print(f"Starting {animal}...")
     if (animal==221):
         phases = ["221_Baseline_0_P6", "221_Baseline_0_P3", "221_Nitro_low_P6", "221_Nitro_low_P3", "221_Nitro_high_P6", "221_Nitro_high_P3",
                   "221_Washout_0_P6", "221_Washout_0_P3", "221_Phen_low_P6", "221_Phen_low_P3", "221_Phen_high_P6", "221_Phen_high_P3",
@@ -243,6 +244,7 @@ def combined_phase_data(animal, plot=True):
     lvedp_stds = []
         
     for phase in phases:
+        print(f"Starting on {phase}...")
         dpdt_max_mean, dpdt_max_std, dpdt_min_mean, dpdt_min_std, lvedp_mean, lvedp_std = pipeline(phase, plot=plot)
 
         dpdt_max_means.append(dpdt_max_mean)
@@ -251,6 +253,7 @@ def combined_phase_data(animal, plot=True):
         dpdt_min_stds.append(dpdt_min_std)
         lvedp_means.append(lvedp_mean)
         lvedp_stds.append(lvedp_std)
+        print(f"Finished {phase}")
 
     dpdt_max_means_df = pd.DataFrame(dpdt_max_means, columns=["dpdt_max_mean"])
     dpdt_min_means_df = pd.DataFrame(dpdt_min_means, columns=["dpdt_min_mean"])
@@ -267,6 +270,7 @@ def combined_phase_data(animal, plot=True):
     dpdt_max_stds_df.to_pickle(f"{animal}_data/dpdt_max_stds_{animal}.pkl")
     dpdt_min_stds_df.to_pickle(f"{animal}_data/dpdt_min_stds_{animal}.pkl")
     lvedp_stds_df.to_pickle(f"{animal}_data/lvedp_stds_{animal}.pkl")
+    print(f"Finished with {animal}. Now generating summary plots...")
 
     if (animal==221):
         plots.generate_221_plot(dpdt_max_means, dpdt_max_stds, animal, "dp/dt max")
