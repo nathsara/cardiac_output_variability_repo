@@ -32,7 +32,7 @@ not at the same index for each subject.
 #process.combined_phase_data(202, plot=False)
 
 # RUN EVERYTHING
-process.combined_phase_data(221, plot=False)
-process.combined_phase_data(205, plot=False)
-process.combined_phase_data(203, plot=False)
-process.combined_phase_data(202, plot=False)
+#process.combined_phase_data(221, plot=False)
+#process.combined_phase_data(205, plot=False)
+#process.combined_phase_data(203, plot=False)
+#process.combined_phase_data(202, plot=False)
